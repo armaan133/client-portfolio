@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView, useMotionValue, useMotionTemplate } from "framer-motion";
+import ScrambleText from "./ScrambleText";
 
 const capabilities = [
   {
@@ -109,7 +110,7 @@ export default function TechMap() {
             transition={{ duration: 0.6 }}
             className="font-mono text-[11px] tracking-[0.2em] uppercase text-[#3a3a3a] block mb-6"
           >
-            [ STACK // TECHNOLOGY ]
+            <ScrambleText text="[ STACK // TECHNOLOGY ]" />
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 30 }}

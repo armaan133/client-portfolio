@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import ScrambleText from "./ScrambleText";
 
 export default function About() {
   const ref = useRef<HTMLDivElement>(null);
@@ -22,7 +23,7 @@ export default function About() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="font-mono text-[11px] tracking-[0.2em] uppercase text-[#3a3a3a] block mb-10"
           >
-            [ STUDIO // ABOUT ]
+            <ScrambleText text="[ STUDIO // ABOUT ]" />
           </motion.span>
 
           <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-start">

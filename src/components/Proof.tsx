@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import ScrambleText from "./ScrambleText";
 
 const metrics = [
   { value: "2-6", unit: "weeks", label: "Typical delivery" },
@@ -28,7 +29,7 @@ export default function Proof() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="font-mono text-[11px] tracking-[0.2em] uppercase text-[#3a3a3a] block mb-10"
           >
-            [ EVIDENCE // OPERATIONAL METRICS ]
+            <ScrambleText text="[ EVIDENCE // OPERATIONAL METRICS ]" />
           </motion.span>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">

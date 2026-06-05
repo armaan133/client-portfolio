@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import ScrambleText from "./ScrambleText";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -182,7 +183,7 @@ export default function PeerValidation() {
 
       <div className="max-w-7xl w-full mx-auto relative z-10">
         <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-[#3a3a3a] block mb-16">
-          [ DATA 01 // CORE METRICS ]
+          <ScrambleText text="[ DATA 01 // CORE METRICS ]" />
         </span>
 
         <div className="grid md:grid-cols-3 gap-10 md:gap-16">

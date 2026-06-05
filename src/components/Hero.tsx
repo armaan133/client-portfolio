@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, Suspense } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import gsap from "gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -20,6 +20,7 @@ precision highp float;
 uniform float u_time;
 uniform vec2 u_resolution;
 uniform float u_scrollSpeed;
+uniform vec2 u_mouse;
 varying vec2 vUv;
 
 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -85,8 +86,8 @@ void main() {
   vec3 teal   = vec3(0.078, 0.420, 0.408);  // teal ambient #14c7c0 desaturated dark
   vec3 teal2  = vec3(0.035, 0.200, 0.195);  // deeper teal for second layer
 
-  // Circular radial glow — brighter toward the bottom-right where cursor lives
-  float dist1 = 1.0 - length((uv - vec2(0.75, 0.65)) * 1.5);
+  // Primary radial glow — tracks the cursor for a fluid, reactive light source
+  float dist1 = 1.0 - length((uv - u_mouse) * 1.5);
   float dist2 = 1.0 - length((uv - vec2(0.15, 0.35)) * 2.0);
   float glow1 = smoothstep(0.0, 1.0, dist1) * 0.7;
   float glow2 = smoothstep(0.0, 1.0, dist2) * 0.35;
@@ -121,7 +122,19 @@ void main() {
 
 function ShaderPlane() {
   const meshRef = useRef<THREE.Mesh>(null);
-  const { viewport } = useThree();
+  // Target cursor position in UV space (0..1, y up). Seeded at the original glow spot.
+  const targetMouse = useRef<[number, number]>([0.75, 0.65]);
+
+  useEffect(() => {
+    const handleMove = (e: PointerEvent) => {
+      targetMouse.current = [
+        e.clientX / window.innerWidth,
+        1 - e.clientY / window.innerHeight,
+      ];
+    };
+    window.addEventListener("pointermove", handleMove, { passive: true });
+    return () => window.removeEventListener("pointermove", handleMove);
+  }, []);
 
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -135,6 +148,10 @@ function ShaderPlane() {
     // Lerp toward Lenis velocity * small scale factor for the chromatic offset
     material.uniforms.u_scrollSpeed.value +=
       (rawVel * 0.6 - material.uniforms.u_scrollSpeed.value) * 0.08;
+    // Ease the glow toward the cursor — low factor gives a weighty, premium follow
+    const m = material.uniforms.u_mouse.value as THREE.Vector2;
+    m.x += (targetMouse.current[0] - m.x) * 0.04;
+    m.y += (targetMouse.current[1] - m.y) * 0.04;
   });
 
   return (
@@ -147,6 +164,7 @@ function ShaderPlane() {
           u_time: { value: 0 },
           u_resolution: { value: [window.innerWidth, window.innerHeight] },
           u_scrollSpeed: { value: 0 },
+          u_mouse: { value: new THREE.Vector2(0.75, 0.65) },
         }}
         transparent
       />
@@ -187,6 +205,7 @@ export default function Hero() {
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const reducedMotion = useReducedMotion();
 
@@ -225,6 +244,25 @@ export default function Hero() {
     };
   }, [reducedMotion]);
 
+  // Subtle pointer parallax — the headline block drifts gently against the cursor
+  useEffect(() => {
+    const el = contentRef.current;
+    if (reducedMotion || !el) return;
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+
+    const xTo = gsap.quickTo(el, "x", { duration: 0.9, ease: "power3.out" });
+    const yTo = gsap.quickTo(el, "y", { duration: 0.9, ease: "power3.out" });
+
+    const handleMove = (e: PointerEvent) => {
+      const relX = e.clientX / window.innerWidth - 0.5;
+      const relY = e.clientY / window.innerHeight - 0.5;
+      xTo(relX * -22);
+      yTo(relY * -14);
+    };
+    window.addEventListener("pointermove", handleMove, { passive: true });
+    return () => window.removeEventListener("pointermove", handleMove);
+  }, [reducedMotion]);
+
   const headlineWords = "We build software for teams who care about the details.".split(" ");
 
   return (
@@ -237,7 +275,7 @@ export default function Hero() {
 
 
 
-      <div className="relative z-10 max-w-7xl w-full mx-auto">
+      <div ref={contentRef} className="relative z-10 max-w-7xl w-full mx-auto">
 
 
         <h1

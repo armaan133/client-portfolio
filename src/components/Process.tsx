@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import ScrambleText from "./ScrambleText";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -102,7 +103,7 @@ export default function Process() {
       <div className="max-w-7xl w-full mx-auto">
         <div className="mb-10">
           <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-[#3a3a3a] block mb-6">
-            [ PROCESS 03 // ARCHITECTURAL ROUTE ]
+            <ScrambleText text="[ PROCESS 03 // ARCHITECTURAL ROUTE ]" />
           </span>
           <h2 className="text-[clamp(1.8rem,4.5vw,3.5rem)] font-medium leading-[1.1] tracking-[-0.02em] text-[#f0f0f0] max-w-2xl">
             How we build.

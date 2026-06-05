@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import ScrambleText from "./ScrambleText";
 
 const services = [
   {
@@ -105,7 +106,7 @@ export default function Services() {
             transition={{ duration: 0.6 }}
             className="font-mono text-[11px] tracking-[0.2em] uppercase text-[#3a3a3a] block mb-6"
           >
-            [ CAPABILITIES // WHAT WE BUILD ]
+            <ScrambleText text="[ CAPABILITIES // WHAT WE BUILD ]" />
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 30 }}

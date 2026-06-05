@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useMotionValue, useMotionTemplate } from "framer-motion";
 import MagneticButton from "./MagneticButton";
+import ScrambleText from "./ScrambleText";
 
 type Category = "startup" | "agency" | "enterprise" | null;
 
@@ -10,6 +11,16 @@ export default function CTA() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [category, setCategory] = useState<Category>(null);
+
+  // Section-level cursor spotlight — mirrors the hero's reactive glow.
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const handleSpotlight = (e: React.MouseEvent) => {
+    const { left, top } = e.currentTarget.getBoundingClientRect();
+    mouseX.set(e.clientX - left);
+    mouseY.set(e.clientY - top);
+  };
+  const spotlight = useMotionTemplate`radial-gradient(600px circle at ${mouseX}px ${mouseY}px, rgba(20,199,192,0.06), transparent 70%)`;
 
   const categories = [
     {
@@ -33,8 +44,17 @@ export default function CTA() {
   ];
 
   return (
-    <section id="contact" className="relative min-h-[100dvh] flex flex-col justify-center py-20 px-6 md:px-12 lg:px-12">
-      <div className="max-w-7xl w-full mx-auto">
+    <section
+      id="contact"
+      onMouseMove={handleSpotlight}
+      className="relative min-h-[100dvh] flex flex-col justify-center py-20 px-6 md:px-12 lg:px-12 overflow-hidden"
+    >
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{ background: spotlight }}
+      />
+      <div className="max-w-7xl w-full mx-auto relative z-10">
         <motion.div
           ref={ref}
           initial={{ opacity: 0 }}
@@ -47,7 +67,7 @@ export default function CTA() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="font-mono text-[11px] tracking-[0.2em] uppercase text-[#3a3a3a] block mb-10"
           >
-            [ TERMINAL 05 // INITIATE DIAGNOSTICS ]
+            <ScrambleText text="[ TERMINAL 05 // INITIATE DIAGNOSTICS ]" />
           </motion.span>
 
           <div className="group/heading cursor-default">
@@ -194,7 +214,7 @@ export default function CTA() {
             className="border-t border-[#141414] pt-10"
           >
             <p className="font-mono text-[11px] tracking-[0.2em] uppercase text-[#3a3a3a] mb-6">
-              [ DIRECT // REACH US ]
+              <ScrambleText text="[ DIRECT // REACH US ]" />
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
