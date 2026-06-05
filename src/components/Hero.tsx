@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, Suspense } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import gsap from "gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -121,7 +121,6 @@ void main() {
 
 function ShaderPlane() {
   const meshRef = useRef<THREE.Mesh>(null);
-  const { viewport } = useThree();
 
   useFrame((state) => {
     if (!meshRef.current) return;
